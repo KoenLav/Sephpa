@@ -26,9 +26,11 @@ class SephpaInputException extends \Exception {}
 abstract class Sephpa
 {
     // credit transfers versions
+    const SEPA_PAIN_001_001_03 = SepaUtilities::SEPA_PAIN_001_001_03;
     const SEPA_PAIN_001_002_03 = SepaUtilities::SEPA_PAIN_001_002_03;
     const SEPA_PAIN_001_003_03 = SepaUtilities::SEPA_PAIN_001_003_03;
     // direct debits versions
+    const SEPA_PAIN_008_001_02 = SepaUtilities::SEPA_PAIN_008_001_02;
     const SEPA_PAIN_008_002_02 = SepaUtilities::SEPA_PAIN_008_002_02;
     const SEPA_PAIN_008_003_02 = SepaUtilities::SEPA_PAIN_008_003_02;
     /**
@@ -108,7 +110,7 @@ abstract class Sephpa
     /**
      * Generates the XML file from the given data
      *
-     * @param string $creDtTm Creation Date Time. You should not use this
+     * @param string $creDtTm You should not use this
      * @throws SephpaInputException
      * @return string Just the xml code of the file
      */

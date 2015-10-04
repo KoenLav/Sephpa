@@ -6,7 +6,6 @@ Sephpa - A PHP class to export SEPA files
 [![Latest Stable Version](https://poser.pugx.org/abcaeffchen/sephpa/v/stable.svg)](https://packagist.org/packages/abcaeffchen/sephpa) 
 [![Total Downloads](https://poser.pugx.org/abcaeffchen/sephpa/downloads.svg)](https://packagist.org/packages/abcaeffchen/sephpa) 
 [![License](https://poser.pugx.org/abcaeffchen/sephpa/license.svg)](https://packagist.org/packages/abcaeffchen/sephpa)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/AbcAeffchen/Sephpa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ##General##
 **Sephpa** [sefa] is a PHP class that creates SEPA (xml,xsd) files. The created xml files fulfill
@@ -40,20 +39,18 @@ to your `composer.json` and include the Composer autoloader to your script.
 
 ###Direct download###
 You can download it here. Make sure you also download [SepaUtilities](https://github.com/AbcAeffchen/SepaUtilities) 
-and make it available. You can use the following snippet to make Sephpa available to your project. 
-Depending on where you put the Sephpa files and where you add the autoloader, you have to adjust
-the path to the src directory of Sephpa.
+and make it available. If you put src directory to your project root, you can use the following
+snippet to make Sephpa and SepaUtilities available to your project.
 
 ```php
 function sephpaAutoloader($class) {
-    $class = preg_replace('#AbcAeffchen\\\Sephpa\\\([^\.]+).php#','$1',$class);
     switch($class)
     {
         case 'Sephpa':
         case 'SephpaCreditTransfer':
         case 'SephpaDirectDebit':
+        case 'SepaUtilities':
             require __DIR__ . '/src/' . $class . '.php';
-            break;
         default:
             require __DIR__ . '/src/payment-collections/' . $class . '.php';
     }
@@ -63,6 +60,7 @@ spl_autoload_register('sephpaAutoloader');
 ```
 
 Feel free to improve or adapt this to your requirement.
+You also have to remove the composer autoloader from `Sephpa.php`.
 
 ##Creating a new SEPA file##
 **Note:** This is not meant to teach you SEPA. If you want to learn more about SEPA or SEPA files,
@@ -70,7 +68,8 @@ you should ask your bank for help. You use this library at your own risk and I a
 if anything goes wrong. You are supposed to check the files **before** handing them to your bank.
 
 ###Credit Transfer###
-You can create a new Sephpa object by using:
+Just include the file `Sephpa.php`. All other files will be included automatically. After that
+you can create a new Sephpa object.
 
 ```php
     $creditTransferFile = new SephpaCreditTransfer('Initiator Name',
@@ -108,7 +107,7 @@ $creditTransferCollection = $creditTransferFile->addCollection(array(
     'ccy'           => 'EUR',                   // Currency. Default is 'EUR'
     'btchBookg'     => 'true',                  // BatchBooking, only 'true' or 'false'
     //'ctgyPurp'      => ,                      // Category Purpose. Do not use this if you do not know how. For further information read the SEPA documentation
-    'reqdExctnDt'   => '2013-11-25',            // Requested Execution Date: YYYY-MM-DD
+    'reqdExctnDt'   => '2013-11-25',            // Date: YYYY-MM-DD
     'ultmtDebtr'    => 'Ultimate Debtor Name'   // just an information, this do not affect the payment (max 70 characters)
 ));
 ```
@@ -152,7 +151,7 @@ $directDebitCollection = $directDebitFile->addCollection(array(
     'btchBookg'     => 'true',                  // BatchBooking, only 'true' or 'false'
     //'ctgyPurp'      => ,                      // Do not use this if you not know how. For further information read the SEPA documentation
     'ultmtCdtr'     => 'Ultimate Creditor Name',// just an information, this do not affect the payment (max 70 characters)
-    'reqdColltnDt'  => '2013-11-25'             // Requested Collection Date: YYYY-MM-DD
+    'reqdColltnDt'  => '2013-11-25'             // Date: YYYY-MM-DD
 ));
                     
 $directDebitCollection->addPayment(array(
@@ -183,17 +182,17 @@ $directDebitCollection->addPayment(array(
 After you have added some payments to your payment collection you can save the finished file by
 
 ```php
-$creditTransferFile->storeSepaFile();
+$creditTransferCollection->storeSepaFile();
 ```
 
 or get it directly without saving it on the server by
 
 ```php
-$creditTransferFile->downloadSepaFile();
+$creditTransferCollection->downloadSepaFile();
 ```
 
 Notice that you can hand over a filename you like, but you should only use the file extension  
-`.xml` (or `.xsd`).
+`.xsd` or `.xml`.
 
 ##Credits##
 Thanks to [Herrmann Herz](https://github.com/Heart1010) who supported me debugging and with great 
